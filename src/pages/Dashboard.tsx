@@ -94,10 +94,21 @@ export default function Dashboard() {
     );
   }
 
-  const pieChartData = Object.entries(summary.byCategory).map(([category, amount]) => ({
-    name: category,
-    value: amount
-  }));
+  // const pieChartData = Object.entries(summary.byCategory).map(([category, amount]) => ({
+  //   name: category,
+  //   value: amount
+  // }));
+
+  const pieChartData = Object.entries(summary.byCategory).map(([category, amount]) => {
+    // Find the corresponding category in DEFAULT_CATEGORIES
+    const categoryInfo = DEFAULT_CATEGORIES.find(cat => cat.name === category);
+  
+    return {
+      name: category,
+      value: amount,
+      color: categoryInfo ? categoryInfo.color : '#6B7280' // Default color if category not found
+    };
+  });
 
   return (
     <div className="space-y-6">
@@ -149,7 +160,7 @@ export default function Dashboard() {
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Expenses by Category</h3>
+          {/* <h3 className="text-lg font-medium text-gray-900 mb-4">Expenses by Category</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -171,7 +182,32 @@ export default function Dashboard() {
                 </Pie>
                 <Tooltip />
               </PieChart>
-            </ResponsiveContainer>
+            </ResponsiveContainer> */}
+
+
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Expenses by Category</h3>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={pieChartData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={80}
+                      paddingAngle={5}
+                      dataKey="value"
+                    >
+                      {pieChartData.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={entry.color} // Use the color from pieChartData
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
           </div>
         </div>
 
